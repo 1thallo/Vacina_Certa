@@ -106,29 +106,29 @@ Diagramas utilizados no planejamento:
 1. Clone o repositório:
 
    ```bash
-   git clone https://github.com/ianfelps/vacina_certa.git
+   git clone https://github.com/1thallo/Vacina_Certa.git
    ```
 
-2. Instale as dependências:
-
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. Configure as variáveis de ambiente em um arquivo `.env`:
+2. Configure as variáveis de ambiente em um arquivo `.env`:
 
    ```env
    SECRET_KEY=sua_chave_secreta
    GOOGLE_MAPS_API_KEY=sua_api_key
    ```
 
+3. Crie um arquivo `admin_users.py`, onde ficará os dados de acesso para página de administrador:
+
+    ```plaintext
+    ADMIN = {
+        "nomelogin" : "senha"
+    }
+    ```
+
 4. Execute a aplicação:
 
    ```bash
    python app.py
    ```
-
-5. Acesse em [http://localhost:5000](http://localhost:5000)
 
 ---
 
