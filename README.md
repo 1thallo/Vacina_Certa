@@ -92,12 +92,25 @@ Diagramas utilizados no planejamento:
 
 ---
 
-## 🖼️ Protótipos de Tela
+## 🖼️ Telas do Sistema
 
 - Página inicial
+![PáginaInicial](https://github.com/user-attachments/assets/454656ec-72dc-491c-8e72-cbeac52b3794)
+
 - Página de busca de vacinas
+![Página de Busca](https://github.com/user-attachments/assets/ffac3a91-e315-42e8-a686-476f99b46447)
+
 - Página de sobre
-- Página de Login
+![Página de Sobre](https://github.com/user-attachments/assets/b14cd5e0-061c-48c8-89bb-5a932bf31ed7)
+
+- Páginas de Administrador
+  - ![Login](https://github.com/user-attachments/assets/c9df22b0-1ccf-4863-8eb8-6adbe20c8e9f)
+  - ![PosLogin](https://github.com/user-attachments/assets/40747ba5-8647-44a2-8443-25c3937fe5a2)
+  - ![Edicao](https://github.com/user-attachments/assets/3edd451b-2a22-4363-9425-c2454eaf9035)
+  - ![Vacinas](https://github.com/user-attachments/assets/97e5966a-0b83-48d2-834b-dc7d39a50884)
+  - ![EdicaoVacinas](https://github.com/user-attachments/assets/ea63b05a-45ce-4957-b18a-e649dd6c8388)
+  - ![SaldoVacinas](https://github.com/user-attachments/assets/6936dd81-ef1b-4dd0-9390-6da862057da6)
+  - ![EdicaoVacinas](https://github.com/user-attachments/assets/226beb60-c452-4cc6-82e6-53e6c96557f1)
 
 ---
 
@@ -157,8 +170,8 @@ Este projeto é de uso acadêmico e livre para fins educacionais.
 1. **Implementação** com base no modelo definido (Flask + SQLite);
 2. **Testes manuais** com diferentes cenários e simulações de uso;
 3. **Expansões futuras**:
-   - 📱 Aplicativo mobile com geolocalização, notificações e experiência otimizada.
+   - 📱 Aplicativo mobile com geolocalização, notificações e experiência mobile otimizada.
 
 ---
 
-**Vacina Certa — Informação e tecnologia a serviço da saúde
+** Vacina Certa — Informação e tecnologia a serviço da saúde
