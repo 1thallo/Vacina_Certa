@@ -13,7 +13,7 @@
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
             <a class="navbar-brand me-2" href="{{ url_for('index') }}">
-                <i class="bi bi-activity"></i> Vacina Certa
+                <i class="bi bi-heart-pulse"></i> Vacina Certa
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                     aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,10 +48,8 @@
         <div class="carousel-inner">
             {% for campanha in campanhas %}
             <div class="carousel-item {% if loop.first %}active{% endif %}">
-                <svg class="bd-placeholder-img" width="100%" height="400" aria-hidden="true"
-                    preserveAspectRatio="xMidYMid slice" focusable="false">
-                    <rect width="100%" height="100%" fill="rgb(37, 47, 62)" />
-                </svg>
+                <img src="{{ url_for('static', filename='carrossel-' ~ loop.index ~ '.png') }}" class="d-block w-100 carousel-img" alt="Imagem da campanha {{ loop.index }}">
+
                 <div class="carousel-caption">
                     <h2 class="fade-in">{{ campanha[1] }}</h2>
                     <hr>
