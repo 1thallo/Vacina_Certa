@@ -20,11 +20,11 @@
             <form method="post">
                 <div class="mb-3">
                     <label class="form-label">Posto</label>
-                    <input type="text" class="form-control" value="{{ saldo[6] }}" disabled>
+                    <input type="text" class="form-control" value="{{ saldo[5] }}" disabled>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Vacina</label>
-                    <input type="text" class="form-control" value="{{ saldo[7] }}" disabled>
+                    <input type="text" class="form-control" value="{{ saldo[6] }}" disabled>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Quantidade Disponível</label>
@@ -47,6 +47,7 @@
                     <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary px-4">Cancelar</a>
                 </div>
             </form>
+            <pre>{{ saldo }}</pre>
         </div>
     </div>
 </body>
