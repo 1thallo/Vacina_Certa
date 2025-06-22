@@ -1,0 +1,309 @@
+-- Ativa integridade referencial
+-- PRAGMA foreign_keys = ON; -- Removido para compatibilidade com outros bancos de dados
+
+BEGIN TRANSACTION;
+-- Postos de Saúde
+CREATE TABLE VCCTB001_POSTO (
+    ID_POSTO       INTEGER PRIMARY KEY AUTOINCREMENT,
+    NO_POSTO       TEXT NOT NULL,
+    ED_POSTO       TEXT NOT NULL,
+    HR_ABERTURA    TEXT NOT NULL,
+    HR_FECHAMENTO  TEXT NOT NULL,
+    NO_REGIAO      TEXT NOT NULL,
+    NR_LONGITUDE   REAL NOT NULL,
+    NR_LATITUDE    REAL NOT NULL,
+    IC_ATIVO       TEXT NOT NULL DEFAULT 'S'
+);
+
+-- Fabricantes
+CREATE TABLE VCCTB008_FABRICANTE (
+    ID_FABRICANTE         INTEGER PRIMARY KEY AUTOINCREMENT,
+    NO_FABRICANTE         TEXT NOT NULL UNIQUE,
+    DS_FABRICANTE         TEXT,
+    NO_PAIS_ORIGEM        TEXT NOT NULL,
+    NO_SITE_INSTITUCIONAL TEXT,
+    EE_CONTATO            TEXT,
+    ED_FABRICANTE         TEXT NOT NULL
+);
+
+-- Vacinas
+CREATE TABLE VCCTB002_VACINA (
+    ID_VACINA             INTEGER PRIMARY KEY AUTOINCREMENT,
+    NO_VACINA             TEXT NOT NULL,
+    DT_FABRICACAO         TEXT NOT NULL,
+    DT_VENCIMENTO         TEXT NOT NULL,
+    DS_VACINA             TEXT,
+    NO_PRINCIPIO_ATIVO    TEXT NOT NULL,
+    IC_TIPO_DOSE          TEXT NOT NULL,
+    IC_TIPO_APLICACAO     TEXT NOT NULL,
+    IC_ATIVO              TEXT NOT NULL DEFAULT 'S',
+    IC_ORIGEM             TEXT NOT NULL DEFAULT 'N',
+    NR_DOSES_RECOMENDADAS INTEGER,
+    DS_RESTRICAO_USO      TEXT,
+    ID_FABRICANTE         INTEGER NOT NULL,
+    FOREIGN KEY (ID_FABRICANTE) REFERENCES VCCTB008_FABRICANTE(ID_FABRICANTE)
+);
+
+-- Campanhas de vacinação
+CREATE TABLE VCCTB003_CAMPANHA_VACINACAO (
+    ID_CAMPANHA_VACINACAO       INTEGER PRIMARY KEY AUTOINCREMENT,
+    NO_CAMPANHA                 TEXT NOT NULL,
+    DS_OBJETIVO                 TEXT,
+    QT_TOTAL_VACINA             INTEGER NOT NULL,
+    DT_INICIO                   TEXT NOT NULL,
+    DT_FIM                      TEXT NOT NULL,
+    DS_RECOMENDACOES_ADICIONAIS TEXT,
+    DS_ABRANGENCIA              TEXT,
+    IC_ATIVO                    TEXT NOT NULL DEFAULT 'S'
+);
+
+-- Público-alvo
+CREATE TABLE VCCTB004_PUBLICO_ALVO (
+    ID_PUBLICO_ALVO INTEGER PRIMARY KEY AUTOINCREMENT,
+    NO_PUBLICO_ALVO TEXT NOT NULL,
+    DS_PUBLICO_ALVO TEXT
+);
+
+-- Associação Vacina ↔ Público-alvo
+CREATE TABLE VCCTB006_VACINA_PUBLICO_ALVO (
+    ID_PUBLICO_ALVO INTEGER NOT NULL,
+    ID_VACINA       INTEGER NOT NULL,
+    PRIMARY KEY (ID_PUBLICO_ALVO, ID_VACINA),
+    FOREIGN KEY (ID_PUBLICO_ALVO) REFERENCES VCCTB004_PUBLICO_ALVO(ID_PUBLICO_ALVO),
+    FOREIGN KEY (ID_VACINA)       REFERENCES VCCTB002_VACINA(ID_VACINA)
+);
+
+-- Associação Vacina ↔ Campanha
+CREATE TABLE VCCTB010_VACINA_CAMPANHA (
+    ID_CAMPANHA INTEGER NOT NULL,
+    ID_VACINA   INTEGER NOT NULL,
+    PRIMARY KEY (ID_VACINA, ID_CAMPANHA),
+    FOREIGN KEY (ID_CAMPANHA) REFERENCES VCCTB003_CAMPANHA_VACINACAO(ID_CAMPANHA_VACINACAO),
+    FOREIGN KEY (ID_VACINA)   REFERENCES VCCTB002_VACINA(ID_VACINA)
+);
+
+-- Posto ↔ Campanha
+CREATE TABLE VCCTB007_POSTO_CAMPANHA (
+    ID_POSTO              INTEGER NOT NULL,
+    ID_CAMPANHA_VACINACAO INTEGER NOT NULL,
+    IC_POSTO_TEMPORARIO   TEXT NOT NULL CHECK (IC_POSTO_TEMPORARIO IN ('N','S')),
+    QT_TOTAL_VACINA_POSTO INTEGER NOT NULL,
+    PRIMARY KEY (ID_POSTO, ID_CAMPANHA_VACINACAO),
+    FOREIGN KEY (ID_POSTO)              REFERENCES VCCTB001_POSTO(ID_POSTO),
+    FOREIGN KEY (ID_CAMPANHA_VACINACAO) REFERENCES VCCTB003_CAMPANHA_VACINACAO(ID_CAMPANHA_VACINACAO)
+);
+
+-- Log de movimentação de estoque
+CREATE TABLE VCCTB005_LOG_ESTOQUE_VACINA (
+    ID_ESTOQUE           INTEGER PRIMARY KEY AUTOINCREMENT,
+    ID_VACINA            INTEGER NOT NULL,
+    ID_POSTO             INTEGER NOT NULL,
+    IC_TIPO_MOVIMENTACAO TEXT NOT NULL,
+    QT_MOVIMENTADA       INTEGER NOT NULL,
+    NR_LOTE              TEXT NOT NULL,
+    DT_MOVIMENTACAO      TEXT NOT NULL,
+    FOREIGN KEY (ID_POSTO)   REFERENCES VCCTB001_POSTO(ID_POSTO),
+    FOREIGN KEY (ID_VACINA)  REFERENCES VCCTB002_VACINA(ID_VACINA)
+);
+
+-- Saldo de estoque por posto
+CREATE TABLE VCCTB009_SALDO_ESTOQUE (
+    ID_POSTO       INTEGER NOT NULL,
+    ID_VACINA      INTEGER NOT NULL,
+    QT_DISPONIVEL  INTEGER NOT NULL,
+    IC_STATUS      TEXT NOT NULL CHECK (IC_STATUS IN ('C','M','V')),
+    DT_ATUALIZACAO TEXT,
+    PRIMARY KEY (ID_POSTO, ID_VACINA),
+    FOREIGN KEY (ID_POSTO)   REFERENCES VCCTB001_POSTO(ID_POSTO),
+    FOREIGN KEY (ID_VACINA)  REFERENCES VCCTB002_VACINA(ID_VACINA)
+);
+
+INSERT INTO VCCTB001_POSTO (NO_POSTO, ED_POSTO, HR_ABERTURA, HR_FECHAMENTO, NO_REGIAO, NR_LONGITUDE, NR_LATITUDE)
+VALUES
+('UBS 1 Asa Sul', 'SGAS 612, Asa Sul', '07:00', '19:00', 'Asa Sul', -47.90942683239704, -15.832718153904718),
+('UBS 2 Asa Norte', 'SQN 114/115, Asa Norte', '07:00', '19:00', 'Asa Norte', -47.89169441890835, -15.742880041852818),
+('UBS 3 Cruzeiro', 'SHCES Qd. 1305, Cruzeiro Novo', '07:00', '19:00', 'Cruzeiro', -47.93596328485959, -15.783418879001973),
+('UBS 4 Guará', 'QE 23, Guará II', '07:00', '19:00', 'Guará', -47.98865106852978, -15.810080924388112),
+('UBS 5 Taguatinga Sul', 'St. D Sul - Taguatinga', '07:00', '19:00', 'Taguatinga', -48.046950455289895, -15.85074873101617),
+('UBS 6 Ceilândia', 'St. P EQNP 10/14', '07:00', '18:00', 'Ceilândia', -48.11422639956267, -15.840167148561376),
+('UBS 7 Samambaia', 'QR 106, Samambaia Sul', '07:00', '19:00', 'Samambaia', -48.082516857522144, -15.877920927333959),
+('UBS 8 Sobradinho', 'Q 14 23 - Sobradinho', '07:00', '19:00', 'Sobradinho', -47.78208303451613, -15.650201257170798),
+('UBS 9 Planaltina', 'Quadra 1, Setor Tradicional, Planaltina', '07:00', '19:00', 'Planaltina', -47.64833878211965, -15.679109997374717),
+('UBS 10 Gama', 'Setor Central, Gama', '07:00', '19:00', 'Gama', -48.12571546914357, -15.97218356741377),
+('UBS 11 Paranoá', 'Quadra 21, Paranoá', '07:00', '19:00', 'Paranoá', -47.78012892237509, -15.769026695834938),
+('UBS 12 Recanto das Emas', 'Quadra 307, Recanto das Emas', '07:00', '19:00', 'Recanto das Emas', -48.1015831940212, -15.91916740062691),
+('UBS 13 Riacho Fundo 2', 'Conj. 3, QN 7B', '07:00', '19:00', 'Riacho Fundo', -48.045936448305795, -15.905836825428581),
+('UBS 14 Núcleo Bandeirante', 'Av. Central, Núcleo Bandeirante', '07:00', '19:00', 'Núcleo Bandeirante', -47.965637937202516, -15.8703252133738),
+('UBS 15 Santa Maria', 'CL 102, Santa Maria', '07:00', '19:00', 'Santa Maria', -47.9899414798424, -16.007151600322793),
+('UBS 16 Lago Sul', 'St. de Habitações Individuais Sul QI 21 - Lago Sul', '07:00', '19:00', 'Lago Sul', -47.85437328360105, -15.84639659160811),
+('UBS 17 Lago Norte', 'SHIN QI 3 - Lago Norte', '07:00', '19:00', 'Lago Norte', -47.87368739920276, -15.725315293986826),
+('HRC - Hospital Regional de Ceilândia', 'QNM 27 Área Especial 1, QNM 28 - Ceilândia', '00:00', '23:59', 'Ceilândia', -48.096385248902784, -15.815081700829408),
+('HRAN - Hospital Regional da Asa Norte', 'SMHN Q 2 - Asa Norte', '00:00', '23:59', 'Asa Norte', -47.88293509312938, -15.784877672687411),
+('HRG - Hospital Regional do Gama', 'St. Central Área Especial 01 - Gama', '00:00', '23:59', 'Gama', -48.068824620045525, -16.0231415767905),
+('HRBz - Hospital Regional de Brazlândia', 'St. Tradicional - Brazlândia', '00:00', '23:59', 'Brazlândia', -48.20361321640386, -15.674913986656296),
+('HRSM - Hospital Regional de Santa Maria', 'AC 102, Blocos, Conj. A/B/C - Santa Maria', '00:00', '23:59', 'Santa Maria', -48.03627667592567, -16.039876738985786),
+('HRPL - Hospital Regional do Paranoá', 'Quadra 02 - Paranoá', '00:00', '23:59', 'Paranoá', -47.78174247588796, -15.781305432866374),
+('HRP - Hospital Regional de Planaltina', 'AV, St. Hospitalar QD 1 - Planaltina', '00:00', '23:59', 'Planaltina', -47.65268071454964, -15.625433958685237),
+('HRGu - Hospital Regional do Guará', 'QI O6, Lote C s/n, Área Especial - Guará I', '00:00', '23:59', 'Guará I', -47.986056304765235, -15.817930359209905);
+
+INSERT INTO VCCTB008_FABRICANTE 
+(NO_FABRICANTE, DS_FABRICANTE, NO_PAIS_ORIGEM, NO_SITE_INSTITUCIONAL, EE_CONTATO, ED_FABRICANTE)
+VALUES
+('BioVacinas', 'Fabricante nacional de vacinas para imunização básica.', 'Brasil', 'https://www.biovacinas.com.br', 'contato@biovacinas.com.br', 'Av. Saúde, 1000, São Paulo, SP'),
+('ImunoGlobal', 'Empresa multinacional de biotecnologia focada em vacinas.', 'Estados Unidos', 'https://www.imunoglobal.com', 'info@imunoglobal.com', '1234 Main St, New York, NY, EUA'),
+('VacinaFarma', 'Especializada em vacinas pediátricas.', 'Alemanha', 'https://www.vacinafarma.de', 'kontakt@vacinafarma.de', 'Berliner Strasse, 45, Berlim, Alemanha'),
+('SaúdeViva', 'Indústria farmacêutica com tradição em imunizantes.', 'Brasil', 'https://www.saudeviva.com.br', 'sac@saudeviva.com.br', 'Rua das Clínicas, 200, Belo Horizonte, MG'),
+('ImunizaMais', 'Foco em pesquisa e desenvolvimento de vacinas inovadoras.', 'Reino Unido', 'https://www.imunizamais.co.uk', 'contact@imunizamais.co.uk', '221B Baker St, Londres, Reino Unido');
+
+INSERT INTO VCCTB002_VACINA 
+(NO_VACINA, DT_FABRICACAO, DT_VENCIMENTO, DS_VACINA, NO_PRINCIPIO_ATIVO, IC_TIPO_DOSE, IC_TIPO_APLICACAO, IC_ATIVO, IC_ORIGEM, NR_DOSES_RECOMENDADAS, DS_RESTRICAO_USO, ID_FABRICANTE)
+VALUES
+('Vacina Tríplice Viral', '2024-01-15', '2026-01-15', 'Protege contra sarampo, caxumba e rubéola.', 'Vírus atenuados', 'Única', 'Intramuscular', 'S', 'N', 1, NULL, 1),
+('Vacina Hepatite B', '2024-02-10', '2026-02-10', 'Previne a hepatite B.', 'Antígeno de superfície do vírus da hepatite B', 'Múltipla', 'Intramuscular', 'S', 'N', 3, NULL, 2),
+('Vacina Influenza', '2024-03-05', '2025-03-05', 'Vacina anual contra gripe.', 'Vírus inativado', 'Única', 'Intramuscular', 'S', 'N', 1, 'Não recomendada para menores de 6 meses.', 3),
+('Vacina COVID-19', '2024-01-20', '2025-07-20', 'Imunização contra COVID-19.', 'RNA mensageiro', 'Múltipla', 'Intramuscular', 'S', 'N', 2, NULL, 4),
+('Vacina HPV', '2023-12-01', '2025-12-01', 'Previne infecções do HPV.', 'Partículas semelhantes ao vírus', 'Múltipla', 'Intramuscular', 'S', 'N', 2, 'Não recomendada para gestantes.', 5),
+('Vacina Pneumocócica 13-valente', '2024-01-10', '2026-01-10', 'Previne doenças causadas pelo Streptococcus pneumoniae.', 'Polissacarídeos conjugados', 'Múltipla', 'Intramuscular', 'S', 'N', 3, NULL, 1),
+('Vacina Meningocócica C', '2024-02-15', '2026-02-15', 'Previne meningite causada pelo meningococo C.', 'Polissacarídeo conjugado', 'Múltipla', 'Intramuscular', 'S', 'N', 2, NULL, 2),
+('Vacina Febre Amarela', '2024-03-20', '2034-03-20', 'Previne a febre amarela.', 'Vírus atenuado', 'Única', 'Subcutânea', 'S', 'N', 1, 'Contraindicada para imunodeprimidos.', 3),
+('Vacina DTP (Tríplice Bacteriana)', '2024-04-05', '2026-04-05', 'Previne difteria, tétano e coqueluche.', 'Toxoides e antígenos bacterianos', 'Múltipla', 'Intramuscular', 'S', 'N', 5, NULL, 4),
+('Vacina Poliomielite (VIP)', '2024-05-12', '2026-05-12', 'Previne poliomielite.', 'Vírus inativado', 'Múltipla', 'Intramuscular', 'S', 'N', 3, NULL, 5),
+('Vacina Rotavírus', '2024-06-01', '2025-06-01', 'Previne gastroenterite por rotavírus.', 'Vírus atenuado', 'Múltipla', 'Oral', 'S', 'N', 2, 'Não recomendada para maiores de 8 meses.', 1),
+('Vacina Varicela', '2024-07-10', '2026-07-10', 'Previne catapora (varicela).', 'Vírus atenuado', 'Única', 'Subcutânea', 'S', 'N', 1, NULL, 2);
+
+INSERT INTO VCCTB003_CAMPANHA_VACINACAO 
+(NO_CAMPANHA, DS_OBJETIVO, QT_TOTAL_VACINA, DT_INICIO, DT_FIM, DS_RECOMENDACOES_ADICIONAIS, DS_ABRANGENCIA, IC_ATIVO)
+VALUES
+('Campanha Nacional de Vacinação contra a Gripe', 
+ 'Reduzir casos graves e óbitos por Influenza.', 
+ 50000, 
+ '2025-04-01', 
+ '2025-06-30', 
+ 'Priorizar idosos, gestantes e crianças menores de 5 anos.', 
+ 'Nacional', 
+ 'Sim'),
+
+('Campanha de Vacinação contra o Sarampo', 
+ 'Erradicar o sarampo em todo o território nacional.', 
+ 30000, 
+ '2025-05-10', 
+ '2025-07-15', 
+ 'Vacinação em escolas e postos de saúde.', 
+ 'Nacional', 
+ 'Sim'),
+
+('Campanha Municipal de Vacinação contra Hepatite B', 
+ 'Aumentar a cobertura vacinal contra Hepatite B.', 
+ 10000, 
+ '2025-03-01', 
+ '2025-05-01', 
+ 'Reforçar a vacinação em adultos jovens.', 
+ 'Municipal', 
+ 'Sim');
+
+INSERT INTO VCCTB004_PUBLICO_ALVO (NO_PUBLICO_ALVO, DS_PUBLICO_ALVO)
+VALUES
+('Crianças menores de 5 anos', 'Público infantil de 0 a 4 anos de idade.'),
+('Idosos', 'Pessoas com 60 anos ou mais.'),
+('Gestantes', 'Mulheres grávidas em qualquer período gestacional.'),
+('Profissionais da Saúde', 'Médicos, enfermeiros, técnicos e demais trabalhadores da área da saúde.'),
+('Adultos Jovens', 'Pessoas entre 18 e 29 anos.'),
+('Portadores de Doenças Crônicas', 'Indivíduos com doenças crônicas como diabetes, hipertensão, asma, entre outras.');
+
+INSERT INTO VCCTB006_VACINA_PUBLICO_ALVO (ID_PUBLICO_ALVO, ID_VACINA)
+VALUES
+(1, 1), -- Crianças menores de 5 anos ↔ Vacina Tríplice Viral
+(2, 3), -- Idosos ↔ Vacina Influenza
+(3, 2), -- Gestantes ↔ Vacina Hepatite B
+(4, 4), -- Profissionais da Saúde ↔ Vacina COVID-19
+(5, 5), -- Adultos Jovens ↔ Vacina HPV
+(2, 4), -- Idosos ↔ Vacina COVID-19
+(1, 2); -- Crianças menores de 5 anos ↔ Vacina Hepatite B
+
+INSERT INTO VCCTB010_VACINA_CAMPANHA (ID_CAMPANHA, ID_VACINA)
+VALUES
+(1, 3), -- Campanha Nacional de Vacinação contra a Gripe ↔ Vacina Influenza
+(2, 1), -- Campanha de Vacinação contra o Sarampo ↔ Vacina Tríplice Viral
+(3, 2), -- Campanha Municipal de Vacinação contra Hepatite B ↔ Vacina Hepatite B
+(1, 4), -- Campanha Nacional de Vacinação contra a Gripe ↔ Vacina COVID-19
+(2, 5); -- Campanha de Vacinação contra o Sarampo ↔ Vacina HPV
+
+INSERT INTO VCCTB007_POSTO_CAMPANHA 
+(ID_POSTO, ID_CAMPANHA_VACINACAO, IC_POSTO_TEMPORARIO, QT_TOTAL_VACINA_POSTO)
+VALUES
+(1, 1, 'N', 12000), -- Posto Central ↔ Campanha Nacional de Vacinação contra a Gripe
+(2, 1, 'N', 9000),  -- Posto Norte ↔ Campanha Nacional de Vacinação contra a Gripe
+(3, 2, 'S', 5000),  -- Posto Sul ↔ Campanha de Vacinação contra o Sarampo (temporário)
+(4, 3, 'N', 3000),  -- Posto Leste ↔ Campanha Municipal de Vacinação contra Hepatite B
+(5, 1, 'S', 7000),  -- Posto Oeste ↔ Campanha Nacional de Vacinação contra a Gripe (temporário)
+(6, 2, 'N', 4000);  -- Posto Jardim ↔ Campanha de Vacinação contra o Sarampo
+
+INSERT INTO VCCTB005_LOG_ESTOQUE_VACINA 
+(ID_VACINA, ID_POSTO, IC_TIPO_MOVIMENTACAO, QT_MOVIMENTADA, NR_LOTE, DT_MOVIMENTACAO)
+VALUES
+(1, 1, 'ENTRADA', 5000, 'L20240101A', '2025-04-01'),
+(1, 1, 'SAIDA',   200,  'L20240101A', '2025-04-05'),
+(2, 2, 'ENTRADA', 3000, 'L20240210B', '2025-03-01'),
+(2, 2, 'SAIDA',   150,  'L20240210B', '2025-03-10'),
+(3, 3, 'ENTRADA', 4000, 'L20240305C', '2025-05-10'),
+(4, 4, 'ENTRADA', 2500, 'L20240120D', '2025-04-15'),
+(5, 5, 'ENTRADA', 1800, 'L20231201E', '2025-05-20'),
+(3, 6, 'SAIDA',   100,  'L20240305C', '2025-06-01');
+
+INSERT INTO VCCTB009_SALDO_ESTOQUE 
+(ID_POSTO, ID_VACINA, QT_DISPONIVEL, IC_STATUS, DT_ATUALIZACAO)
+VALUES
+-- Tríplice Viral
+(1, 1, 4800, 'C', '2025-04-10'),
+(2, 1, 3200, 'M', '2025-04-10'),
+(3, 1, 1500, 'M', '2025-04-10'),
+
+-- Hepatite B
+(2, 2, 2850, 'C', '2025-03-15'),
+(4, 2, 1200, 'M', '2025-03-15'),
+(5, 2, 800, 'V', '2025-03-15'),
+
+-- Influenza
+(3, 3, 4000, 'C', '2025-05-15'),
+(6, 3, 3900, 'C', '2025-06-05'),
+(7, 3, 2000, 'M', '2025-06-05'),
+
+-- COVID-19 (em vários postos)
+(4, 4, 2500, 'C', '2025-04-20'),
+(8, 4, 1800, 'M', '2025-04-20'),
+(9, 4, 1200, 'M', '2025-04-20'),
+(10, 4, 900, 'V', '2025-04-20'),
+
+-- HPV
+(5, 5, 1800, 'C', '2025-05-25'),
+(11, 5, 1000, 'M', '2025-05-25'),
+
+-- Pneumocócica 13-valente
+(6, 6, 1200, 'M', '2025-06-10'),
+(12, 6, 800, 'V', '2025-06-10'),
+
+-- Meningocócica C
+(7, 7, 900, 'M', '2025-06-15'),
+(13, 7, 700, 'V', '2025-06-15'),
+
+-- Febre Amarela
+(8, 8, 600, 'M', '2025-07-01'),
+(14, 8, 400, 'V', '2025-07-01'),
+
+-- DTP (Tríplice Bacteriana)
+(9, 9, 1500, 'C', '2025-07-10'),
+(15, 9, 900, 'M', '2025-07-10'),
+
+-- Poliomielite (VIP)
+(10, 10, 1100, 'M', '2025-07-20'),
+(16, 10, 700, 'V', '2025-07-20'),
+
+-- Rotavírus
+(11, 11, 800, 'M', '2025-08-01'),
+(17, 11, 500, 'V', '2025-08-01'),
+
+-- Varicela
+(12, 12, 600, 'M', '2025-08-10'),
+(18, 12, 300, 'V', '2025-08-10');
+
+COMMIT;

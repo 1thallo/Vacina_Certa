@@ -1,2 +1,3 @@
-# Vacina_Certa
-Repositório criado para armazenar o projeto final da disciplina de Novas Tecnologias - Vacina Certa.
+# Projeto Vacina Certa
+
+Projeto final da disciplina de Novas Tecnologias.
