@@ -1,13 +1,12 @@
-# Projeto (Vacina Certa)
+# Vacina Certa
 
-O Vacina Certa é uma plataforma web desenvolvida como resposta à dificuldade enfrentada pela população do Distrito Federal em obter informações claras, centralizadas e atualizadas sobre a disponibilidade de vacinas e campanhas de vacinação nos postos de saúde.
-O objetivo principal é simplificar o acesso à informação, reduzir deslocamentos desnecessários e combater a desinformação, garantindo que os cidadãos possam encontrar os imunizantes que precisam de forma rápida e segura.
+**Vacina Certa** é uma plataforma web desenvolvida como projeto final da disciplina de Novas Tecnologias da Universidade Católica de Brasília (UCB). O objetivo é facilitar o acesso da população do Distrito Federal às informações sobre vacinação, promovendo transparência, eficiência e praticidade no acompanhamento da disponibilidade de vacinas nos postos de saúde.
 
 ---
 
 ## 📌 Objetivo
 
-O **Vacina Certa** surgiu como resposta à dificuldade enfrentada por cidadãos para encontrar informações confiáveis sobre:
+O Vacina Certa surgiu como resposta à dificuldade enfrentada por cidadãos para encontrar informações confiáveis sobre:
 
 - Disponibilidade de vacinas;
 - Localização dos postos de saúde;
@@ -18,43 +17,55 @@ A proposta é **centralizar e simplificar o acesso à informação**, promovendo
 
 ---
 
-## 💡 Funcionalidades
+## ✨ Funcionalidades
 
-- Exibição de campanhas em destaque na página inicial;
-- Busca por tipo de vacina e por região administrativa (RA) do DF;
-- Mapa interativo com os postos de saúde que oferecem cada vacina;
-- Níveis de estoque representados visualmente (cheio, moderado, vazio);
-- Página institucional com perguntas frequentes (FAQ) e “Quem Somos”.
+- **Busca de Vacinas:** Permite ao usuário pesquisar vacinas disponíveis por tipo e região, exibindo informações detalhadas e status do estoque (Completo, Médio, Vazio).
+- **Visualização de Postos:** Lista e localiza postos de vacinação, com endereço, horário de funcionamento e localização no mapa.
+- **Dashboard Administrativo:** Área restrita para administradores, com autenticação, onde é possível gerenciar:
+  - Cadastro, edição e exclusão de postos de saúde.
+  - Cadastro, edição e exclusão de vacinas.
+  - Controle de saldo de vacinas por posto (CRUD completo da tabela associativa).
+  - Cadastro de fabricantes de vacinas.
+- **Mapas Integrados:** Visualização dos postos no mapa e traçado de rotas via Google Maps.
+- **Design Responsivo:** Interface moderna, responsiva e acessível, com uso de Bootstrap 5 e ícones temáticos.
+- **Mensagens e Alertas:** Feedback visual para ações do usuário e mensagens de sucesso/erro.
+- **Página institucional** com perguntas frequentes (FAQ) e “Quem Somos”.
 
 ---
 
 ## 🛠️ Tecnologias Utilizadas
 
-| Camada        | Ferramentas                          |
-|---------------|--------------------------------------|
-| Back-end      | Python, Flask                        |
-| Front-end     | HTML, CSS, JavaScript, Bootstrap     |
-| Banco de Dados| SQLite                               |
-| Mapa          | Folium                               |
+- **Backend:** Python, Flask, Flask-Login, SQLite
+- **Frontend:** HTML5, CSS3, Bootstrap 5, JavaScript, Bootstrap Icons
+- **APIs:** Google Maps API
+- **Outros:** dotenv para variáveis de ambiente
 
 ---
 
 ## 📋 Requisitos
 
-### ✨ Funcionalidades Principais
+### Funcionais
 
-- Busca de Vacinas: Sistema de consulta para verificar a disponibilidade de vacinas específicas.
-- Mapa Interativo: Ferramenta de geolocalização para visualizar os postos de saúde e as vacinas disponíveis em cada um.
-- Campanhas em Destaque: Seção dedicada à divulgação clara de campanhas de vacinação em andamento no DF.
-- Área Informativa: Espaço com perguntas e respostas frequentes para esclarecer dúvidas da população sobre os imunizantes.
-  
-### 🔒 Não Funcionais
+- Permitir ao usuário pesquisar vacinas por nome, tipo e região.
+- Exibir lista de postos de vacinação com informações detalhadas.
+- Permitir ao administrador cadastrar, editar e excluir vacinas, postos e fabricantes.
+- Permitir ao administrador gerenciar o saldo de vacinas por posto.
+- Autenticação obrigatória para acesso ao painel administrativo.
+- Exibir status do estoque de vacinas de forma visual e intuitiva.
+- Permitir visualização dos postos em mapa integrado.
+- Exibição de campanhas em destaque na página inicial.
+- Área informativa com perguntas e respostas frequentes.
 
-- Interface simples e acessível;
-- Retorno rápido nas buscas;
-- Segurança com autenticação na área administrativa;
-- Banco de dados leve (SQLite);
-- Adequação à LGPD mesmo sem coletar dados sensíveis.
+### Não Funcionais
+
+- Interface responsiva e compatível com dispositivos móveis.
+- Utilização de banco de dados SQLite para persistência dos dados.
+- Segurança no acesso ao painel administrativo (Flask-Login).
+- Feedback visual para todas as ações do usuário.
+- Código organizado, modular e documentado.
+- Compatibilidade com navegadores modernos.
+- Cumprimento da LGPD no tratamento de dados sensíveis.
+- Retorno rápido nas buscas.
 
 ---
 
@@ -83,11 +94,61 @@ Diagramas utilizados no planejamento:
 
 ## 🖼️ Protótipos de Tela
 
-### Página inicial
+- Página inicial
+- Página de busca de vacinas
+- Página de sobre
+- Página de Login
 
-### Página de busca de vacinas
+---
 
-### Página de perguntas frequentes (FAQ)
+## 🚀 Como Executar
+
+1. Clone o repositório:
+
+   ```bash
+   git clone https://github.com/ianfelps/vacina_certa.git
+   ```
+
+2. Instale as dependências:
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. Configure as variáveis de ambiente em um arquivo `.env`:
+
+   ```env
+   SECRET_KEY=sua_chave_secreta
+   GOOGLE_MAPS_API_KEY=sua_api_key
+   ```
+
+4. Execute a aplicação:
+
+   ```bash
+   python app.py
+   ```
+
+5. Acesse em [http://localhost:5000](http://localhost:5000)
+
+---
+
+## 👨‍💻 Contribuidores
+
+- Lucas Homero ([lucas](https://github.com/lucashomero))
+- Ian Felipe ([ian](https://github.com/ianfelps))
+
+---
+
+## 📄 Licença
+
+Este projeto é de uso acadêmico e livre para fins educacionais.
+
+---
+
+## 💡 Observações
+
+- O sistema foi desenvolvido para fins didáticos e pode ser expandido para uso real em campanhas de vacinação.
+- Sugestões, melhorias e contribuições são bem-vindas!
 
 ---
 
@@ -96,11 +157,8 @@ Diagramas utilizados no planejamento:
 1. **Implementação** com base no modelo definido (Flask + SQLite);
 2. **Testes manuais** com diferentes cenários e simulações de uso;
 3. **Expansões futuras**:
-   - 🔐 Painel administrativo com login e edição de dados;
    - 📱 Aplicativo mobile com geolocalização, notificações e experiência otimizada.
 
 ---
 
-## ⚙️ Como Executar o Projeto
-
----
+**Vacina Certa — Informação e tecnologia a serviço da saúde
