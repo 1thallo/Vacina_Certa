@@ -76,19 +76,19 @@ Diagramas utilizados no planejamento:
 
 ### Diagrama de Classes
 
-![46fe3f52-67a2-4384-bd14-ad08aba8fdf9](https://github.com/user-attachments/assets/39827ca3-062c-4c86-b5f1-39336c6fe457)
+![image](https://github.com/user-attachments/assets/33edccc0-89d6-44f5-80f9-a21366338e9a)
 
 ### Diagrama de Casos de Uso
 
-![40f17172-d0e5-4db3-88c4-c9153ab2a95f](https://github.com/user-attachments/assets/5eeab8d2-7a5a-45b2-9035-3548f2930527)
+![image](https://github.com/user-attachments/assets/2276acc2-bcbc-4ed9-96ec-5ba726dabc82)
 
 ### Modelo Conceitual (Entidades e Atributos)
 
-![015badd8-64b8-4f96-b40c-bf12aedf1ca8](https://github.com/user-attachments/assets/7f910c15-7b5b-4836-a502-e3a4b680a231)
+![image](https://github.com/user-attachments/assets/33998f2c-68fa-4b60-bf13-88ad2e43b278)
 
 ### Modelo Lógico (Tabelas do Banco de Dados)
 
-![ca06c0bd-08db-494f-a9c0-b6cd7f171238](https://github.com/user-attachments/assets/6eabd83c-207b-4a1d-b6aa-86a72aaaf455)
+![image](https://github.com/user-attachments/assets/04a7e071-3f7a-460d-b8de-cecef12d8e24)
 
 ---
 
